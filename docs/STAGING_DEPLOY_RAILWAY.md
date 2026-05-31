@@ -93,6 +93,8 @@ npm run db:seed
 
 Pode rodar como Railway one-off command no API service, ou localmente com as variaveis do staging carregadas.
 
+Use somente `prisma migrate deploy` em staging/producao. Nao use `prisma db push` nesses ambientes: ele altera o schema diretamente sem registrar a migration versionada, o que pode deixar tabelas como `Tenant` fora do historico aplicado por deploy.
+
 ## 4. Worker service
 
 Source:

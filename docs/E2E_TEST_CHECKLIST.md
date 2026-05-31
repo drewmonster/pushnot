@@ -64,7 +64,8 @@ Use este checklist para validar o MVP ponta a ponta.
 - [ ] Configurar `PUSH_PROVIDER=expo`.
 - [ ] Configurar `ADMIN_API_TOKEN`, `ADMIN_EMAIL`, `ADMIN_PASSWORD` e `SESSION_SECRET`.
 - [ ] Configurar `DEMO_TENANT_PUBLIC_KEY`.
-- [ ] Rodar `npm run db:migrate`.
+- [ ] Rodar `npm run db:migrate:deploy` em staging/producao; usar `npm run db:migrate` apenas em desenvolvimento.
+- [ ] Confirmar que `prisma db push` nao foi usado em staging/producao.
 - [ ] Rodar `npm run db:seed`.
 - [ ] API rodando com Postgres/Redis externos.
 - [ ] Worker rodando com a mesma `DATABASE_URL` e `REDIS_URL`.

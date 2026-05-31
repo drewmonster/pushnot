@@ -46,6 +46,7 @@
 ## Database
 
 - [ ] Migrations executadas com `npm run db:migrate:deploy`.
+- [ ] Nenhuma alteracao aplicada em staging/producao com `prisma db push`.
 - [ ] Seed executado com `npm run db:seed`.
 - [ ] Tenant demo criado.
 - [ ] Tenant public key igual ao usado no mobile.

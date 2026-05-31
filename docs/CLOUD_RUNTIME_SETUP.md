@@ -47,6 +47,8 @@ npm run db:migrate
 npm run db:seed
 ```
 
+Para staging/producao, substitua `npm run db:migrate` por `npm run db:migrate:deploy`. Nao use `prisma db push` fora de desenvolvimento: esses ambientes devem aplicar apenas migrations versionadas.
+
 O seed cria:
 
 - Tenant `demo-tenant`, ou o valor de `DEMO_TENANT_ID`.

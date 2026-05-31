@@ -125,6 +125,8 @@ npm run dev:worker
 npm run dev:admin
 ```
 
+Use `npm run db:migrate` apenas para desenvolvimento. Em staging e producao, aplique migrations versionadas com `npm run db:migrate:deploy` antes do seed. Nao use `prisma db push` nesses ambientes, porque ele nao registra historico em `prisma/migrations`.
+
 Para mobile em dispositivo fisico, `EXPO_PUBLIC_API_URL` e `MOBILE_API_URL` devem apontar para uma URL acessivel pelo celular. `localhost` no celular nao aponta para sua maquina.
 
 Guia detalhado: [docs/CLOUD_RUNTIME_SETUP.md](docs/CLOUD_RUNTIME_SETUP.md).
@@ -136,7 +138,7 @@ Guia detalhado: [docs/CLOUD_RUNTIME_SETUP.md](docs/CLOUD_RUNTIME_SETUP.md).
 - `npm run dev:worker`: inicia o worker BullMQ.
 - `npm run dev:admin`: inicia Next.js.
 - `npm run dev:mobile`: inicia Expo.
-- `npm run db:migrate`: roda Prisma migrate dev.
+- `npm run db:migrate`: cria/aplica migrations em desenvolvimento com Prisma migrate dev.
 - `npm run db:migrate:deploy`: roda `prisma generate` e `prisma migrate deploy` para staging/producao.
 - `npm run db:seed`: cria tenant e campanha demo.
 - `npm run db:studio`: abre Prisma Studio.
