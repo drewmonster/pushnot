@@ -1,0 +1,33 @@
+{
+  "name": "pushnot",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:infra": "docker compose up -d",
+    "dev:api": "npm run dev -w @pushnot/api",
+    "dev:admin": "npm run dev -w @pushnot/admin",
+    "dev:mobile": "npm run start -w @pushnot/mobile",
+    "dev:worker": "npm run worker -w @pushnot/api",
+    "start:api": "npm run start -w @pushnot/api",
+    "start:worker": "npm run start:worker -w @pushnot/api",
+    "start:admin": "npm run start -w @pushnot/admin",
+    "build": "npm run prisma:generate && npm run build:workspaces",
+    "build:workspaces": "npm run build --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "prisma:generate": "npm run prisma:generate -w @pushnot/api",
+    "db:migrate": "npm run db:migrate -w @pushnot/api",
+    "db:migrate:deploy": "npm run db:migrate:deploy -w @pushnot/api",
+    "db:seed": "npm run db:seed -w @pushnot/api",
+    "db:studio": "npm run db:studio -w @pushnot/api",
+    "test:isolation": "npm run test:isolation -w @pushnot/api",
+    "healthcheck": "node scripts/healthcheck.mjs",
+    "smoke:staging": "node scripts/smoke-staging.mjs"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5"
+  }
+}

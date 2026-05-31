@@ -1,0 +1,188 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum DevicePlatform {
+  ios
+  android
+}
+
+enum ConsentStatus {
+  active
+  revoked
+}
+
+enum DevicePushStatus {
+  active
+  inactive
+  invalid
+}
+
+enum CampaignStatus {
+  draft
+  scheduled
+  sending
+  sent
+  failed
+}
+
+enum NotificationSendStatus {
+  queued
+  sent_to_provider
+  receipt_ok
+  receipt_error
+  failed
+}
+
+enum NotificationEventType {
+  opened
+}
+
+enum AuditAction {
+  campaign_created
+  campaign_updated
+  campaign_test_sent
+  campaign_sent
+  device_registered
+  device_unregistered
+}
+
+model Tenant {
+  id        String   @id
+  name      String
+  publicKey String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  devices   Device[]
+  templates NotificationTemplate[]
+  campaigns Campaign[]
+  auditLogs AuditLog[]
+}
+
+model Device {
+  id            String        @id @default(cuid())
+  tenantId      String
+  deviceId      String
+  pushToken     String
+  platform      DevicePlatform
+  appVersion    String
+  locale        String
+  timezone      String
+  consentStatus ConsentStatus
+  pushStatus    DevicePushStatus @default(active)
+  invalidatedAt DateTime?
+  unregisteredAt DateTime?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  sends  NotificationSend[]
+  events NotificationEvent[]
+
+  @@unique([tenantId, deviceId])
+  @@index([tenantId, consentStatus])
+  @@index([tenantId, pushStatus])
+  @@index([pushToken])
+}
+
+model NotificationTemplate {
+  id        String   @id @default(cuid())
+  tenantId  String
+  title     String
+  body      String
+  imageUrl  String?
+  deepLink  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tenant    Tenant     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  campaigns Campaign[]
+}
+
+model Campaign {
+  id               String         @id @default(cuid())
+  tenantId         String
+  templateId       String?
+  internalName     String
+  title            String
+  body             String
+  imageUrl         String?
+  deepLink         String?
+  segment          Json?
+  scheduledAt      DateTime?
+  androidChannelId String?
+  androidIconKey   String?
+  status           CampaignStatus @default(draft)
+  createdBy        String
+  sentBy           String?
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  tenant   Tenant                @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  template NotificationTemplate? @relation(fields: [templateId], references: [id], onDelete: SetNull)
+  sends    NotificationSend[]
+  events   NotificationEvent[]
+
+  @@index([tenantId, status])
+  @@index([scheduledAt])
+}
+
+model NotificationSend {
+  id            String                 @id @default(cuid())
+  campaignId    String
+  deviceId      String?
+  pushToken     String
+  provider      String                 @default("expo")
+  providerTicketId String?
+  receiptCheckedAt DateTime?
+  status        NotificationSendStatus @default(queued)
+  errorMessage  String?
+  openedAt      DateTime?
+  createdAt     DateTime               @default(now())
+  updatedAt     DateTime               @updatedAt
+
+  campaign Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  device   Device?  @relation(fields: [deviceId], references: [id], onDelete: SetNull)
+  events   NotificationEvent[]
+
+  @@index([campaignId, status])
+  @@index([deviceId])
+}
+
+model NotificationEvent {
+  id         String                @id @default(cuid())
+  tenantId   String
+  campaignId String
+  deviceId   String?
+  sendId     String?
+  eventType  NotificationEventType
+  payload    Json?
+  createdAt  DateTime              @default(now())
+
+  campaign Campaign          @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  device   Device?           @relation(fields: [deviceId], references: [id], onDelete: SetNull)
+  send     NotificationSend? @relation(fields: [sendId], references: [id], onDelete: SetNull)
+
+  @@index([tenantId, campaignId, eventType])
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  tenantId   String?
+  actorId    String
+  action     AuditAction
+  targetType String
+  targetId   String?
+  metadata   Json?
+  createdAt  DateTime @default(now())
+
+  tenant Tenant? @relation(fields: [tenantId], references: [id], onDelete: SetNull)
+
+  @@index([tenantId, action])
+}
