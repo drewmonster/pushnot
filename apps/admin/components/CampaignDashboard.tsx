@@ -1,7 +1,6 @@
 "use client";
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
-import { ANDROID_NOTIFICATION_ICON_KEYS } from "@pushnot/shared";
 import { apiFetch } from "@/lib/api";
 
 type Tenant = {
@@ -30,7 +29,6 @@ type Campaign = {
   segment?: unknown;
   scheduledAt?: string | null;
   androidChannelId?: string | null;
-  androidIconKey?: string | null;
   status: string;
   createdAt: string;
   sends: NotificationSend[];
@@ -52,7 +50,6 @@ type CampaignForm = {
   segment: string;
   scheduledAt: string;
   androidChannelId: string;
-  androidIconKey: string;
 };
 
 const emptyForm: CampaignForm = {
@@ -64,8 +61,7 @@ const emptyForm: CampaignForm = {
   deepLink: "",
   segment: "",
   scheduledAt: "",
-  androidChannelId: "default",
-  androidIconKey: "default"
+  androidChannelId: "default"
 };
 
 export function CampaignDashboard() {
@@ -145,9 +141,7 @@ export function CampaignDashboard() {
         <section className="toolbar">
           <div>
             <strong>{campaigns.length}</strong> campanhas
-            <div className="meta">
-              Android usa apenas iconKey empacotado; iOS não troca ícone real por notificação.
-            </div>
+            <div className="meta">Nome e icones do app vem do build instalado.</div>
           </div>
           <label>
             Tenant
@@ -205,8 +199,7 @@ function CampaignCard({
       deepLink: campaign.deepLink ?? "",
       segment: campaign.segment ? JSON.stringify(campaign.segment) : "",
       scheduledAt: campaign.scheduledAt ? toDatetimeLocal(campaign.scheduledAt) : "",
-      androidChannelId: campaign.androidChannelId ?? "default",
-      androidIconKey: campaign.androidIconKey ?? "default"
+      androidChannelId: campaign.androidChannelId ?? "default"
     }),
     [campaign]
   );
@@ -386,8 +379,14 @@ function CampaignFormFields({
         <textarea value={form.body} onChange={(event) => setField("body", event.target.value)} required />
       </label>
       <label>
-        Imagem
-        <input value={form.imageUrl} onChange={(event) => setField("imageUrl", event.target.value)} placeholder="https://..." />
+        Image URL optional
+        <input
+          type="url"
+          maxLength={2048}
+          value={form.imageUrl}
+          onChange={(event) => setField("imageUrl", event.target.value)}
+          placeholder="https://..."
+        />
       </label>
       <label>
         Agendamento
@@ -401,22 +400,30 @@ function CampaignFormFields({
         Android channel
         <input value={form.androidChannelId} onChange={(event) => setField("androidChannelId", event.target.value)} />
       </label>
-      <label>
-        Android iconKey
-        <select value={form.androidIconKey} onChange={(event) => setField("androidIconKey", event.target.value)}>
-          {ANDROID_NOTIFICATION_ICON_KEYS.map((key) => (
-            <option key={key} value={key}>
-              {key}
-            </option>
-          ))}
-        </select>
-      </label>
+      <NotificationPreview form={form} />
       <div className="actions span">
         <button className="primary" type="submit">
           {submitLabel}
         </button>
       </div>
     </form>
+  );
+}
+
+function NotificationPreview({ form }: { form: CampaignForm }) {
+  return (
+    <div className="notification-preview span" aria-label="Notification preview">
+      <div className="preview-icon">LN</div>
+      <div className="preview-content">
+        <div className="preview-app-name">Ledger Notify</div>
+        <div className="preview-title">{form.title || "Campaign title"}</div>
+        <div className="preview-body">{form.body || "Campaign message"}</div>
+        {form.imageUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img className="preview-image" src={form.imageUrl} alt="" />
+        ) : null}
+      </div>
+    </div>
   );
 }
 
@@ -439,8 +446,7 @@ function toPayload(form: CampaignForm, partial = false) {
     deepLink: form.deepLink || null,
     segment: form.segment ? JSON.parse(form.segment) : undefined,
     scheduledAt: form.scheduledAt ? new Date(form.scheduledAt).toISOString() : null,
-    androidChannelId: form.androidChannelId || null,
-    androidIconKey: form.androidIconKey || null
+    androidChannelId: form.androidChannelId || null
   };
 
   if (!partial) {

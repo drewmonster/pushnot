@@ -22,10 +22,10 @@ export const tenantId = process.env.EXPO_PUBLIC_TENANT_ID ?? extra?.tenantId ?? 
 
 export const tenantConfig: TenantConfig =
   extra?.tenantConfig ?? {
-    appName: "PushNot Demo",
-    slug: "pushnot-demo",
-    bundleIdentifier: "com.pushnot.demo",
-    packageName: "com.pushnot.demo",
+    appName: "Ledger Notify",
+    slug: "ledger-notify",
+    bundleIdentifier: "com.pushnot.ledgernotify",
+    packageName: "com.pushnot.ledgernotify",
     appPublicKey:
       process.env.EXPO_PUBLIC_TENANT_PUBLIC_KEY ??
       process.env.EXPO_PUBLIC_APP_PUBLIC_KEY ??

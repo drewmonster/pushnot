@@ -77,8 +77,7 @@ export async function sendCampaignNow(input: {
         deepLink: campaign.deepLink,
         tenantId: campaign.tenantId,
         campaignId: campaign.id,
-        androidChannelId: campaign.androidChannelId,
-        androidIconKey: device?.platform === "android" ? campaign.androidIconKey : null
+        androidChannelId: campaign.androidChannelId
       };
     });
 

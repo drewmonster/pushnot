@@ -13,10 +13,10 @@ type TenantBuildConfig = {
 
 export const TENANT_CONFIGS: Record<string, TenantBuildConfig> = {
   "demo-tenant": {
-    appName: "PushNot Demo",
-    slug: "pushnot-demo",
-    bundleIdentifier: "com.pushnot.demo",
-    packageName: "com.pushnot.demo",
+    appName: "Ledger Notify",
+    slug: "ledger-notify",
+    bundleIdentifier: "com.pushnot.ledgernotify",
+    packageName: "com.pushnot.ledgernotify",
     appPublicKey:
       process.env.EXPO_PUBLIC_TENANT_PUBLIC_KEY ??
       process.env.EXPO_PUBLIC_APP_PUBLIC_KEY ??
@@ -34,6 +34,7 @@ const projectId = process.env.EXPO_PUBLIC_EAS_PROJECT_ID;
 const config: ExpoConfig = {
   name: tenantConfig.appName,
   slug: tenantConfig.slug,
+  icon: tenantConfig.appIcon,
   version: "0.1.0",
   scheme: "pushnot",
   orientation: "portrait",
@@ -52,6 +53,7 @@ const config: ExpoConfig = {
   android: {
     package: tenantConfig.packageName,
     adaptiveIcon: {
+      foregroundImage: tenantConfig.appIcon,
       backgroundColor: tenantConfig.primaryColor
     }
   },
@@ -59,6 +61,7 @@ const config: ExpoConfig = {
     [
       "expo-notifications",
       {
+        icon: tenantConfig.notificationIconAndroid,
         color: tenantConfig.primaryColor,
         defaultChannel: "default"
       }

@@ -14,7 +14,7 @@
     "db:migrate:deploy": "prisma generate && prisma migrate deploy",
     "db:seed": "tsx prisma/seed.ts",
     "db:studio": "prisma studio",
-    "test:isolation": "tsc -p tsconfig.json && node dist/src/services/tenantScope.test.js",
+    "test:isolation": "tsc -p tsconfig.json && node dist/src/services/tenantScope.test.js && node dist/src/routes/campaignSchemas.test.js && node dist/src/services/pushProvider.test.js",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {

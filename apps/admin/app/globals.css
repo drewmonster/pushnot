@@ -239,6 +239,64 @@ label {
   grid-template-columns: 1.4fr 1fr 2fr;
 }
 
+.notification-preview {
+  align-items: start;
+  background: #f9fafb;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: 38px minmax(0, 1fr);
+  padding: 12px;
+}
+
+.preview-icon {
+  align-items: center;
+  background: var(--accent);
+  border-radius: 8px;
+  color: #ffffff;
+  display: flex;
+  font-size: 12px;
+  font-weight: 700;
+  height: 38px;
+  justify-content: center;
+  width: 38px;
+}
+
+.preview-content {
+  min-width: 0;
+}
+
+.preview-app-name {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.preview-title {
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 700;
+  margin-top: 2px;
+}
+
+.preview-body {
+  color: var(--muted);
+  font-size: 13px;
+  margin-top: 2px;
+  overflow-wrap: anywhere;
+}
+
+.preview-image {
+  aspect-ratio: 16 / 9;
+  border-radius: 6px;
+  display: block;
+  margin-top: 10px;
+  max-height: 220px;
+  object-fit: cover;
+  width: 100%;
+}
+
 .notice {
   color: var(--muted);
   font-size: 13px;

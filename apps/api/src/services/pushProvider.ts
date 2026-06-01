@@ -11,7 +11,6 @@ export type PushMessage = {
   tenantId: string;
   campaignId: string;
   androidChannelId?: string | null;
-  androidIconKey?: string | null;
 };
 
 export type PushSendResult = {
@@ -48,21 +47,7 @@ export class ExpoPushProvider implements PushProvider {
       errorMessage: "Invalid Expo push token"
     }));
 
-    const expoMessages: ExpoPushMessage[] = validMessages.map((message) => ({
-      to: message.to,
-      title: message.title,
-      body: message.body,
-      sound: "default",
-      channelId: message.androidChannelId ?? undefined,
-      richContent: message.imageUrl ? { image: message.imageUrl } : undefined,
-      data: {
-        tenantId: message.tenantId,
-        campaignId: message.campaignId,
-        sendId: message.sendId,
-        deepLink: message.deepLink ?? undefined,
-        androidIconKey: message.androidIconKey ?? undefined
-      }
-    }));
+    const expoMessages: ExpoPushMessage[] = validMessages.map(toExpoPushMessage);
 
     const chunks = this.expo.chunkPushNotifications(expoMessages);
     let cursor = 0;
@@ -125,6 +110,24 @@ export class ExpoPushProvider implements PushProvider {
       };
     });
   }
+}
+
+export function toExpoPushMessage(message: PushMessage): ExpoPushMessage {
+  return {
+    to: message.to,
+    title: message.title,
+    body: message.body,
+    sound: "default",
+    channelId: message.androidChannelId ?? undefined,
+    richContent: message.imageUrl ? { image: message.imageUrl } : undefined,
+    data: {
+      tenantId: message.tenantId,
+      campaignId: message.campaignId,
+      sendId: message.sendId,
+      imageUrl: message.imageUrl ?? undefined,
+      deepLink: message.deepLink ?? undefined
+    }
+  };
 }
 
 export class MockPushProvider implements PushProvider {

@@ -1,36 +1,12 @@
 import type { FastifyInstance, FastifyRequest } from "fastify";
 import { z } from "zod";
-import { ANDROID_NOTIFICATION_ICON_KEYS } from "@pushnot/shared";
 import { env } from "../env.js";
 import { prisma } from "../prisma.js";
 import { writeAuditLog } from "../services/audit.js";
 import { dispatchCampaignSend } from "../services/queue.js";
 import { getCampaignStats } from "../services/stats.js";
 import { campaignByIdWhere, campaignListWhere, campaignSendsWhere } from "../services/tenantScope.js";
-
-const segmentSchema = z
-  .object({
-    platform: z.enum(["ios", "android"]).optional(),
-    locale: z.string().min(1).optional(),
-    timezone: z.string().min(1).optional()
-  })
-  .strict()
-  .optional();
-
-const campaignBodySchema = z.object({
-  tenantId: z.string().min(1),
-  internalName: z.string().min(1),
-  title: z.string().min(1),
-  body: z.string().min(1),
-  imageUrl: z.string().url().optional().nullable(),
-  deepLink: z.string().min(1).optional().nullable(),
-  segment: segmentSchema,
-  scheduledAt: z.string().datetime().optional().nullable(),
-  androidChannelId: z.string().min(1).optional().nullable(),
-  androidIconKey: z.enum(ANDROID_NOTIFICATION_ICON_KEYS).optional().nullable()
-});
-
-const updateCampaignBodySchema = campaignBodySchema.partial().omit({ tenantId: true });
+import { campaignBodySchema, updateCampaignBodySchema } from "./campaignSchemas.js";
 
 const paramsSchema = z.object({ id: z.string().min(1) });
 const tenantQuerySchema = z.object({ tenantId: z.string().min(1) });
